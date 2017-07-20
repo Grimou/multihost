@@ -1,8 +1,13 @@
 /* eslint consistent-return: 0 */
 module.exports = function multihost(options) {
     const { hosts, route, server } = options;
-    if (route && typeof(route) !== 'string') {
-        throw new Error('multihost: route is not a string');
+    let routeList = [];
+    if (route && route instanceof Array) {
+        routeList = route;
+    } else if (route && typeof (route) === 'string') {
+        routeList.concat(route);
+    } else if (route && typeof (route) !== 'string') {
+        throw new Error('multihost: route is not a string or an array');
     }
     if (!server) {
         throw new Error('multihost: server required');
@@ -34,7 +39,13 @@ module.exports = function multihost(options) {
             }
         }
         // route
-        if (route && req.url.indexOf(route) !== 0) {
+        let matchRoute = false;
+        for (let i = 0; i < routeList.length; i++) {
+            if (req.url.toLowerCase().indexOf(routeList[i].toLowerCase()) === 0) {
+                matchRoute = true;
+            }
+        }
+        if (routeList.length > 0 && !matchRoute) {
             return next();
         }
         // server
