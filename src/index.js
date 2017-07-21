@@ -5,7 +5,7 @@ module.exports = function multihost(options) {
     if (route && route instanceof Array) {
         routeList = route;
     } else if (route && typeof (route) === 'string') {
-        routeList.concat(route);
+        routeList.push(route);
     } else if (route && typeof (route) !== 'string') {
         throw new Error('multihost: route is not a string or an array');
     }
